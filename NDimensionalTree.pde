@@ -1,13 +1,13 @@
-class Tree {
+class NDimensionalTree {
   Node root;
   int height = 0;
-  Tree() {
+  NDimensionalTree() {
   }
-  Tree(Node node) {
+  NDimensionalTree(Node node) {
     this.root = node;
   }
 
-
+ // classic insert but  recursive in multiple dimensions
   void insert(Node node, int index) {
 
     if (root == null) {
@@ -31,7 +31,7 @@ class Tree {
   void insertCase(Node node, Node curr, int index) {
 
 
-    // vado a destra 
+    // go right
     if (node.values[index] > curr.coor) {
 
       if (curr.right == null) {
@@ -50,7 +50,7 @@ class Tree {
         }
       } else insertCase(node, curr.right, index);
     } 
-    // vado a sinistra
+    // go left
     else if (node.values[index] < curr.coor) {
       if (curr.left == null) {
 
@@ -67,7 +67,7 @@ class Tree {
         }
       } else insertCase(node, curr.left, index);
     } 
-    // creo nuovo livello
+    // nest inside the same node
     else {
 
       if (index < node.values.length -1) {
@@ -81,7 +81,7 @@ class Tree {
     }
   }
 
-  // handy void function
+  // handy void function to read parts of the tree
   void readTree(int[] interactions, int[] bounds) {
 
     read(root, bounds, interactions, 0);
@@ -105,7 +105,7 @@ class Tree {
       read(curr.right, bounds, interactions, depth );
     }
 
-    // draw the last depth level
+    // draw only the last depth level
     if (curr.store != null) {
 
 
@@ -144,7 +144,7 @@ class Tree {
 
 
 
-
+  /* TODO 
   boolean search(int[] coords) {
 
 
@@ -159,4 +159,5 @@ class Tree {
    
     return false;
   }
+  */
 }
