@@ -3,10 +3,10 @@ class Node {
 
   int[] values;
   int depth = 0;
-  Tree tree = new Tree();
-  int coor;
-
-  Node left, right, store;
+  NDimensionalTree tree = new NDimensionalTree();
+  int coor; // monodimensional coordinate
+  Node left, right;
+  Store store;
 
   public Node(int[] values) {
     this.values = values;

@@ -7,8 +7,15 @@ class NDimensionalTree {
     this.root = node;
   }
 
- // classic insert but  recursive in multiple dimensions
-  void insert(Node node, int index) {
+  // classic insert but recursive in multiple dimensions
+  void insert(Store[] stores) {
+    for (int i = 0; i < stores.length; i++) {
+      insert(stores[i], 0);
+    }
+  }
+
+  // classic insert but recursive in multiple dimensions
+  void insert(Store node, int index) {
 
     if (root == null) {
       height++;
@@ -27,8 +34,8 @@ class NDimensionalTree {
       insertCase(node, root, index);
     }
   }
-
-  void insertCase(Node node, Node curr, int index) {
+  // insert core function
+  void insertCase(Store node, Node curr, int index) {
 
 
     // go right
@@ -40,6 +47,7 @@ class NDimensionalTree {
 
         // creo un nuovo livello
         if (index < node.values.length -1) {
+
           int newindex = index+1;
           height++;
 
@@ -58,11 +66,13 @@ class NDimensionalTree {
 
         // creo un nuovo livello
         if (index < node.values.length -1) {
+
           int newindex = index+1;
           height++;
 
           curr.left.tree.insert(node, newindex);
         } else {
+
           curr.left.store = node;
         }
       } else insertCase(node, curr.left, index);
@@ -71,10 +81,13 @@ class NDimensionalTree {
     else {
 
       if (index < node.values.length -1) {
+
         int newindex = index+1;
 
         curr.tree.insert(node, newindex);
       } else {
+
+        /** EDIT LAST FILL WITH STORE KEY **/
         curr.right = new Node(node.values[index]);
         curr.right.store = node;
       }
@@ -82,42 +95,54 @@ class NDimensionalTree {
   }
 
   // handy void function to read parts of the tree
-  void readTree(int[] interactions, int[] bounds) {
+  // interactions is used to keep track of how optimized the tree is
+  // bounds is the range of coords you want
+  // omitKey is used if you want to omit a store from its neighbors
+  // (example if you need neighboring store in a store's range
+  void readTree(ArrayList<Store> answer, int[] bounds, Integer omitKey) {
 
-    read(root, bounds, interactions, 0);
+    read(root, bounds, answer, 0,  omitKey);
   }
 
 
 
-
-  void read(Node curr, int[] bounds, int[] interactions, int depth) {
-    interactions[0]++;
+  // find clouds of nodes inside a bound. bound.length must be double the coords number
+  void read(Node curr, int[] bounds, ArrayList<Store> answer, int depth, Integer omitKey) {
+    
     // check the left branch
     if (curr.left !=null && curr.coor > bounds[0 + 2*depth]) {
-
-      read(curr.left, bounds, interactions, depth);
+      if (depth == 2) { 
+      
+      }
+      read(curr.left, bounds, answer, depth, omitKey);
     }
     // check the right branch
     if (curr.right != null && curr.coor < bounds[1 + 2*depth]) {
 
-      if (bounds[1+2*depth] < curr.right.coor) {
-      }
-      read(curr.right, bounds, interactions, depth );
+
+      read(curr.right, bounds, answer, depth, omitKey );
     }
-
-    // draw only the last depth level
-    if (curr.store != null) {
-
-
-      curr.store.draw();
-    } 
     // check the sub-tree of the node
     if (curr.tree.root != null
 
       && curr.coor >  bounds[0 + 2*depth]
-      && curr.coor <  bounds[1 + 2*depth]) {
+      && curr.coor <  bounds[1 + 2*depth]
+      && curr.store == null ) {
 
-      read(curr.tree.root, bounds, interactions, depth + 1);
+      read(curr.tree.root, bounds, answer, depth + 1, omitKey);
+    }
+    // draw only the last depth level
+    if (curr.store != null &&
+      curr.coor >  bounds[0 + 2*depth]
+      && curr.coor <  bounds[1 + 2*depth]
+      ) {
+
+      if(omitKey == null || omitKey != curr.store.key)
+      curr.store.draw();
+      answer.push(curr.store);
+      }
+      
+   
     }
   }
 
@@ -144,20 +169,36 @@ class NDimensionalTree {
 
 
 
-  /* TODO 
-  boolean search(int[] coords) {
+// search for a single store with determined key and coords
+  boolean search(int[] coords, int key) {
 
 
 
-    return  src(root, coords, 0);
+    return  src(root, coords, key, 0);
   }
 
-  boolean src(Node curr, int[] coords, int depth) {
+   boolean src(Node curr, int[] coords, int key, int depth) {
 
-    if(curr.coor == coords[depth]) {
+    if (curr!=null && curr.store != null && curr.store.key == key) {
+      print("vero");
+      return true;
+    } else {
+      if (curr != null && 
+        depth == coords.length -1) {
+        return src(curr.right, coords, key, depth);
       }
-   
-    return false;
+      // down a depth level
+      else if (curr != null &&
+        curr.coor == coords[depth]) {
+        return src(curr.tree.root, coords, key, depth+1);
+        // go left
+      } else if ( curr != null && curr.left != null && coords[depth] < curr.coor) {
+        return src(curr.left, coords, key, depth);
+      } else if ( curr != null && curr.right != null && coords[depth] > curr.coor) {
+        return src(curr.right, coords, key, depth);
+      }
+      print("end");
+      return false;
+    }
   }
-  */
 }
